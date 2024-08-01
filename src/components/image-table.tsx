@@ -1,4 +1,4 @@
-import { useAppSelector } from '@/app/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
 import {
   Table,
   TableBody,
@@ -10,6 +10,7 @@ import {
 import {
   selectTableData,
   selectColumnSettings,
+  setActiveImage,
 } from '@/app/store/slices/table-slice';
 import {
   ColumnDef,
@@ -42,6 +43,7 @@ export function ImageTable() {
   const [searchByColumn, setSearchByColumn] = useState('');
   const [columns, setColumns] = useState<ColumnDef<object>[]>([]);
 
+  const dispatch = useAppDispatch();
   const tableData = useAppSelector(selectTableData);
   const tableColumns = useAppSelector(selectColumnSettings);
 
@@ -75,6 +77,7 @@ export function ImageTable() {
                   src={value}
                   className='h-32'
                   onError={() => setHasError(true)}
+                  onClick={() => dispatch(setActiveImage(value))}
                 ></img>
               );
             }
@@ -83,7 +86,7 @@ export function ImageTable() {
         };
       }),
     );
-  }, [tableColumns]);
+  }, [dispatch, tableColumns]);
 
   const table = useReactTable({
     data: tableData,
@@ -212,7 +215,8 @@ export function ImageTable() {
           )}{' '}
           of {table.getPageCount()}
           <br></br>
-          Showing {table.getPaginationRowModel().rows.length} rows out of {table.getRowCount()}
+          Showing {table.getPaginationRowModel().rows.length} rows out of{' '}
+          {table.getRowCount()}
         </div>
         <div className='space-x-2'>
           <Button
