@@ -32,7 +32,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { ChevronDown } from 'lucide-react';
+import { ArrowUpDown, ChevronDown } from 'lucide-react';
 import { Input } from './ui/input';
 import { isValidHttpUrl } from '@/lib/url';
 
@@ -63,7 +63,21 @@ export function ImageTable() {
         return {
           id: x.name,
           accessorKey: x.name,
-          header: x.name,
+          header: ({ column }) => {
+            if (!x.sort) return x.name
+
+            return (
+              <Button
+                variant='ghost'
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === 'asc')
+                }
+              >
+                {x.name}
+                <ArrowUpDown className='ml-2 h-4 w-4' />
+              </Button>
+            );
+          },
           enableSorting: x.sort,
           enableHiding: true,
           cell: ({ row }) => {
