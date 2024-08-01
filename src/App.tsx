@@ -7,7 +7,7 @@ import ViewImagePage from './pages/view-image-page';
 function App() {
   return (
     <TooltipProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
           <Route path='/' index element={<MainPage></MainPage>}></Route>
           <Route
