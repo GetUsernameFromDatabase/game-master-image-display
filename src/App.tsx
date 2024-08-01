@@ -1,5 +1,5 @@
 import '@/app/globals.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route, HashRouter } from 'react-router-dom';
 import { TooltipProvider } from './components/ui/tooltip';
 import MainPage from './pages/main-page';
 import ViewImagePage from './pages/view-image-page';
@@ -7,7 +7,7 @@ import ViewImagePage from './pages/view-image-page';
 function App() {
   return (
     <TooltipProvider>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <HashRouter>
         <Routes>
           <Route path='/' index element={<MainPage></MainPage>}></Route>
           <Route
@@ -15,7 +15,7 @@ function App() {
             element={<ViewImagePage></ViewImagePage>}
           ></Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </TooltipProvider>
   );
 }
