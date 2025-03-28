@@ -1,11 +1,16 @@
 import { allowDrop } from '@/lib/dragging';
 import { cn } from '@/lib/utils';
-import { HTMLAttributes, forwardRef } from 'react';
+import { HTMLAttributes } from 'react';
 
-export const DropZone = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLDivElement>
->(({ className, ...properties }, ref) => {
+export const DropZone = (
+  {
+    ref,
+    className,
+    ...properties
+  }: HTMLAttributes<HTMLDivElement> & {
+    ref: React.RefObject<HTMLDivElement>;
+  }
+) => {
   return (
     <div
       ref={ref}
@@ -14,4 +19,4 @@ export const DropZone = forwardRef<
       {...properties}
     ></div>
   );
-});
+};
