@@ -1,12 +1,12 @@
-import { FunnelPlus } from 'lucide-react';
-import { Button } from './ui/button';
+import { FunnelPlus } from "lucide-react";
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import { FilterColumnValueChange } from '@/reducers/filter-column-values';
+} from "./ui/dropdown-menu";
+import { FilterColumnValueChange } from "@/reducers/filter-column-values";
 
 /**  `{tableColumn.name: [values]}` */
 export interface FilterColumnValues {
@@ -31,21 +31,22 @@ export const SelectFilterSection = ({
         return (
           <DropdownMenu key={columnKey}>
             <DropdownMenuTrigger asChild>
-              <Button variant='outline' className='ml-auto' ref={undefined}>
-                {columnKey} <FunnelPlus className='ml-2 h-4 w-4' />
+              <Button variant="outline" className="ml-auto">
+                {columnKey} <FunnelPlus className="ml-2 h-4 w-4" />
                 {/** TODO: Filter ICON */}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align='end' ref={undefined}>
+            <DropdownMenuContent align="end">
               {Object.entries(filterColumnValues[columnKey]).map(
                 ([key, isChecked]) => {
                   return (
                     <DropdownMenuCheckboxItem
                       key={key}
-                      className='capitalize'
+                      className="capitalize"
                       checked={isChecked}
-                      onCheckedChange={() => filterColumnValueChange(columnKey, key)}
-                      ref={undefined}
+                      onCheckedChange={() =>
+                        filterColumnValueChange(columnKey, key)
+                      }
                     >
                       {key} {isChecked}
                     </DropdownMenuCheckboxItem>

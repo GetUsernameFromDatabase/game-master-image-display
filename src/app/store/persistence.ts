@@ -1,6 +1,6 @@
 import type { RootState } from "@/app/store";
 
-const localStorageKey = 'image-view-with-category-state'
+const localStorageKey = "image-view-with-category-state";
 
 export function saveToLocalStorage(state: RootState) {
   try {

@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import {
   Table,
   TableBody,
@@ -6,12 +6,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table';
+} from "./ui/table";
 import {
   selectTableData,
   selectColumnSettings,
   setActiveImage,
-} from '@/app/store/slices/table-slice';
+} from "@/app/store/slices/table-slice";
 import {
   ColumnDef,
   ColumnFilter,
@@ -27,28 +27,28 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { useEffect, useReducer, useState } from 'react';
-import { Button } from './ui/button';
+} from "@tanstack/react-table";
+import { useEffect, useReducer, useState } from "react";
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import { ArrowUpDown, ChevronDown } from 'lucide-react';
-import { Input } from './ui/input';
-import { isValidHttpUrl } from '@/lib/url';
+} from "./ui/dropdown-menu";
+import { ArrowUpDown, ChevronDown } from "lucide-react";
+import { Input } from "./ui/input";
+import { isValidHttpUrl } from "@/lib/url";
 import {
   FilterableColumnValues,
   SelectFilterSection,
-} from './select-filter-section';
+} from "./select-filter-section";
 import {
   FilterColumnValueChange,
   filterColumnValuesReducer,
-} from '@/reducers/filter-column-values';
+} from "@/reducers/filter-column-values";
 
-declare module '@tanstack/react-table' {
+declare module "@tanstack/react-table" {
   interface FilterFns {
     stringArrayIncludes: FilterFn<unknown>;
   }
@@ -58,7 +58,7 @@ export function ImageTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [searchByColumn, setSearchByColumn] = useState('');
+  const [searchByColumn, setSearchByColumn] = useState("");
   const [columns, setColumns] = useState<ColumnDef<object>[]>([]);
 
   const [filterColumnValues, dispatchFilterColumnValues] = useReducer(
@@ -99,7 +99,7 @@ export function ImageTable() {
           return filterValue.includes(value);
         }
 
-        if (typeof value === 'string') {
+        if (typeof value === "string") {
           return value.includes(filterValue);
         }
 
@@ -113,18 +113,18 @@ export function ImageTable() {
     value,
   ) => {
     dispatchFilterColumnValues({
-      type: 'change_filter',
+      type: "change_filter",
       payload: { column, value },
     });
 
     // I can't believe I have to do this twice...
     // https://react.dev/reference/react/useReducer#ive-dispatched-an-action-but-logging-gives-me-the-old-state-value
     const fcv = filterColumnValuesReducer(filterColumnValues, {
-      type: 'change_filter',
+      type: "change_filter",
       payload: { column, value },
     });
 
-    let newColumnFilters: { [key: string]: ColumnFilter } = {};
+    const newColumnFilters: { [key: string]: ColumnFilter } = {};
     Object.keys(fcv).forEach((ck) => {
       Object.entries(fcv[ck])
         .filter(([, shouldBeFiltered]) => shouldBeFiltered)
@@ -132,7 +132,7 @@ export function ImageTable() {
           const value = v[0];
 
           if (ck in newColumnFilters) {
-            let columnFilter = newColumnFilters[ck];
+            const columnFilter = newColumnFilters[ck];
 
             if (Array.isArray(columnFilter.value)) {
               columnFilter.value.push(value);
@@ -149,6 +149,8 @@ export function ImageTable() {
   };
 
   useEffect(() => {
+    dispatchFilterColumnValues({ type: "reset" });
+
     tableColumns.forEach((column) => {
       if (column.filter) {
         const columnUniqueFilterValues: FilterableColumnValues = {};
@@ -158,7 +160,7 @@ export function ImageTable() {
         });
 
         dispatchFilterColumnValues({
-          type: 'set_column',
+          type: "set_column",
           payload: { column: column.name, values: columnUniqueFilterValues },
         });
       }
@@ -185,14 +187,13 @@ export function ImageTable() {
 
               return (
                 <Button
-                  variant='ghost'
+                  variant="ghost"
                   onClick={() =>
-                    column.toggleSorting(column.getIsSorted() === 'asc')
+                    column.toggleSorting(column.getIsSorted() === "asc")
                   }
-                  ref={undefined}
                 >
                   {x.name}
-                  <ArrowUpDown className='ml-2 h-4 w-4' />
+                  <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
               );
             },
@@ -207,7 +208,7 @@ export function ImageTable() {
                 return (
                   <img
                     src={value}
-                    className='h-32'
+                    className="h-32"
                     onError={() => setHasError(true)}
                     onClick={() => dispatch(setActiveImage(value))}
                   ></img>
@@ -215,32 +216,31 @@ export function ImageTable() {
               }
               return value;
             },
-            // TODO: move this filter to table definition and ask for it here
-            filterFn: 'stringArrayIncludes',
+
+            filterFn: "stringArrayIncludes",
           };
         });
 
       return result;
     });
-  }, [dispatch, tableColumns]);
+  }, [dispatch, tableColumns, tableData]);
 
   return (
-    <div className='w-full'>
-      <div className='flex items-center py-4'>
+    <div className="w-full">
+      <div className="flex items-center py-4">
         {searchByColumn && (
           <Input
             placeholder={`Filter by ${searchByColumn.trim().toLowerCase()}...`}
             value={
               (table.getColumn(searchByColumn)?.getFilterValue() as string) ??
-              ''
+              ""
             }
             onChange={(event) => {
               table
                 .getColumn(searchByColumn)
                 ?.setFilterValue(event.target.value);
             }}
-            className='max-w-sm'
-            ref={undefined}
+            className="max-w-sm"
           />
         )}
 
@@ -253,11 +253,11 @@ export function ImageTable() {
           <DropdownMenu>
             {/* choose visible columns */}
             <DropdownMenuTrigger asChild>
-              <Button variant='outline' className='ml-auto' ref={undefined}>
-                Columns <ChevronDown className='ml-2 h-4 w-4' />
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align='end' ref={undefined}>
+            <DropdownMenuContent align="end">
               {table
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
@@ -265,12 +265,11 @@ export function ImageTable() {
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
-                      className='capitalize'
+                      className="capitalize"
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
                       }
-                      ref={undefined}
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
@@ -281,14 +280,14 @@ export function ImageTable() {
         )}
       </div>
 
-      <div className='rounded-md border'>
-        <Table ref={undefined}>
-          <TableHeader ref={undefined}>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} ref={undefined}>
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} ref={undefined}>
+                    <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -301,16 +300,15 @@ export function ImageTable() {
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody ref={undefined}>
+          <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  ref={undefined}
+                  data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} ref={undefined}>
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -320,11 +318,10 @@ export function ImageTable() {
                 </TableRow>
               ))
             ) : (
-              <TableRow ref={undefined}>
+              <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'
-                  ref={undefined}
+                  className="h-24 text-center"
                 >
                   No results.
                 </TableCell>
@@ -334,35 +331,33 @@ export function ImageTable() {
         </Table>
       </div>
 
-      <div className='flex items-center justify-end space-x-2 py-4'>
+      <div className="flex items-center justify-end space-x-2 py-4">
         {/* table footer */}
-        <div className='flex-1 text-sm text-muted-foreground'>
-          Page{' '}
+        <div className="flex-1 text-sm text-muted-foreground">
+          Page{" "}
           {Math.min(
             table.getState().pagination.pageIndex + 1,
             table.getPageCount(),
-          )}{' '}
+          )}{" "}
           of {table.getPageCount()}
           <br></br>
-          Showing {table.getPaginationRowModel().rows.length} rows out of{' '}
+          Showing {table.getPaginationRowModel().rows.length} rows out of{" "}
           {table.getRowCount()}
         </div>
-        <div className='space-x-2'>
+        <div className="space-x-2">
           <Button
-            variant='outline'
-            size='sm'
+            variant="outline"
+            size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            ref={undefined}
           >
             Previous
           </Button>
           <Button
-            variant='outline'
-            size='sm'
+            variant="outline"
+            size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            ref={undefined}
           >
             Next
           </Button>

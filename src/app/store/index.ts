@@ -1,9 +1,15 @@
-import { configureStore, combineSlices } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
-import { tableSlice } from './slices/table-slice';
+import { configureStore, combineSlices } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { tableSlice } from "./slices/table-slice";
 
-import { createStateSyncMiddleware, initMessageListener } from 'redux-state-sync';
-import { loadFromLocalStorage, saveToLocalStorage } from '@/app/store/persistence';
+import {
+  createStateSyncMiddleware,
+  initMessageListener,
+} from "redux-state-sync";
+import {
+  loadFromLocalStorage,
+  saveToLocalStorage,
+} from "@/app/store/persistence";
 
 const rootReducer = combineSlices(tableSlice);
 export type RootState = ReturnType<typeof rootReducer>;
@@ -26,4 +32,4 @@ store.subscribe(() => saveToLocalStorage(store.getState()));
 initMessageListener(store);
 
 export type AppStore = typeof store;
-export type AppDispatch = AppStore['dispatch'];
+export type AppDispatch = AppStore["dispatch"];

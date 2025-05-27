@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,26 +7,25 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Delete, File } from 'lucide-react';
-import { useRef, useState } from 'react';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { parse as csvParse } from 'csv-parse/browser/esm/sync';
-import { ClimbingBoxLoader } from 'react-spinners';
-import { useAppDispatch } from '@/app/store/hooks';
-import { setTableData } from '@/app/store/slices/table-slice';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Delete, File } from "lucide-react";
+import { useRef, useState } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { parse as csvParse } from "csv-parse/browser/esm/sync";
+import { ClimbingBoxLoader } from "react-spinners";
+import { useAppDispatch } from "@/app/store/hooks";
+import { setTableData } from "@/app/store/slices/table-slice";
 
 const errorCodes = {
-  responseNotOk: 'RESPONSE_NOT_OK',
-  noFile: 'NO_FILE',
-  noData: 'NO_DATA',
-  unknownError: 'UNKNOWN_ERROR',
+  responseNotOk: "RESPONSE_NOT_OK",
+  noFile: "NO_FILE",
+  noData: "NO_DATA",
+  unknownError: "UNKNOWN_ERROR",
 } as const;
 
 type ErrorCodeValues = (typeof errorCodes)[keyof typeof errorCodes];
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface ImportResult {
   /** For non-thrown errors */
   errorCode: ErrorCodeValues | null;
@@ -70,8 +69,12 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
   const fileInput = useRef<HTMLInputElement>(null);
 
   async function onSubmit() {
-    const dataLink = linkInput.current?.value;
-    const file = fileInput.current?.value;
+    if (!linkInput.current || !fileInput.current) {
+      throw new Error("Link input and fileinput required");
+    }
+
+    const dataLink = linkInput.current.value;
+    const file = fileInput.current.value;
 
     /**  */
     let result: ImportResult = { errorCode: errorCodes.noData, data: null };
@@ -83,7 +86,7 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
         result = await importFromLink(dataLink);
       }
     } catch (error) {
-      console.error('Error occured during import:', error);
+      console.error("Error occured during import:", error);
       result.errorCode = errorCodes.unknownError;
     }
 
@@ -96,7 +99,7 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
       return;
     }
 
-    console.error('No valid data found');
+    console.error("No valid data found");
     // TODO: some error management
     // I am thinking display error text, red out the input (label?) that the error is associated with
   }
@@ -104,14 +107,14 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size='sm' variant='outline' className='h-8 gap-1'>
-          <File className='h-3.5 w-3.5' />
-          <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
+        <Button size="sm" variant="outline" className="h-8 gap-1">
+          <File className="h-3.5 w-3.5" />
+          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
             Import
           </span>
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Import Table Data</DialogTitle>
           <DialogDescription>
@@ -119,36 +122,36 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className='grid gap-4 py-4'>
-          <div className='grid grid-cols-6 items-center gap-4'>
-            <Label htmlFor='import-link' className='text-right'>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-6 items-center gap-4">
+            <Label htmlFor="import-link" className="text-right">
               Link
             </Label>
             <Input
-              id='import-link'
+              id="import-link"
               ref={linkInput}
-              type='text'
-              className='col-span-5'
+              type="text"
+              className="col-span-5"
             />
           </div>
-          <div className='text-center'>or</div>
-          <div className='grid grid-cols-6 items-center gap-4'>
-            <Label htmlFor='import-file' className='text-right'>
+          <div className="text-center">or</div>
+          <div className="grid grid-cols-6 items-center gap-4">
+            <Label htmlFor="import-file" className="text-right">
               File
             </Label>
             <Input
-              id='import-file'
+              id="import-file"
               ref={fileInput}
-              type='file'
-              className='col-span-4'
-              accept='.csv'
+              type="file"
+              className="col-span-4"
+              accept=".csv"
             />
             <Tooltip>
               <TooltipTrigger asChild>
                 <Delete
-                  className='col-span-1'
+                  className="col-span-1"
                   onClick={() => {
-                    if (fileInput.current?.value) fileInput.current.value = '';
+                    if (fileInput.current?.value) fileInput.current.value = "";
                   }}
                 ></Delete>
               </TooltipTrigger>
@@ -158,22 +161,22 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
             </Tooltip>
           </div>
           <ClimbingBoxLoader
-            color={'teal'}
+            color={"teal"}
             cssOverride={{
-              display: 'block',
-              margin: '0 auto',
-              borderColor: 'red',
+              display: "block",
+              margin: "0 auto",
+              borderColor: "red",
             }}
             loading={loading}
             size={150}
-            aria-label='Loading Spinner'
-            data-testid='loader'
+            aria-label="Loading Spinner"
+            data-testid="loader"
           />
         </div>
         <DialogFooter>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button type='submit' onClick={onSubmit}>
+              <Button type="submit" onClick={onSubmit}>
                 Import
               </Button>
             </TooltipTrigger>

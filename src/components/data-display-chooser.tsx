@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -6,12 +6,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Fragment, useState } from 'react';
-import { selectTableKeys } from '@/app/store/slices/table-slice';
-import { useAppSelector } from '@/app/store/hooks';
-import { BoxProperties, DataDisplayBox } from './data-display-box';
-import { DropZone } from './drop-zone';
+} from "@/components/ui/dialog";
+import { Fragment, useState } from "react";
+import { selectTableKeys } from "@/app/store/slices/table-slice";
+import { useAppSelector } from "@/app/store/hooks";
+import { BoxProperties, DataDisplayBox } from "./data-display-box";
+import { DropZone } from "./drop-zone";
 
 // TODO: there has to be a better way than to just use setBoxes, right?
 //  just mutating object is not picked up well by react
@@ -42,13 +42,13 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
 
   function onDataDisplayBoxDrop(box: BoxProperties) {
     if (dragIndex == null) {
-      console.warn('Drag index is null, nothing to drop');
+      console.warn("Drag index is null, nothing to drop");
       return;
     }
 
     const dragBox = boxes.find((x) => x.index == dragIndex);
     if (!dragBox) {
-      console.error('Drag box not found, cannot drop');
+      console.error("Drag box not found, cannot drop");
       return;
     }
 
@@ -67,7 +67,7 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
 
   function onDropZoneDrop(desiredIndex: number) {
     if (dragIndex == null) {
-      console.warn('Drag index is null, nothing to drop');
+      console.warn("Drag index is null, nothing to drop");
       return;
     }
 
@@ -75,7 +75,7 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
       return;
     }
 
-    const direction = desiredIndex < dragIndex ? 'UP' : 'DOWN';
+    const direction = desiredIndex < dragIndex ? "UP" : "DOWN";
 
     setBoxes(
       boxes.map((x) => {
@@ -84,7 +84,7 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
         }
 
         if (
-          direction == 'UP' &&
+          direction == "UP" &&
           x.index < dragIndex &&
           x.index >= desiredIndex
         ) {
@@ -92,7 +92,7 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
         }
 
         if (
-          direction == 'DOWN' &&
+          direction == "DOWN" &&
           x.index > dragIndex &&
           x.index <= desiredIndex
         ) {
@@ -129,11 +129,10 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
   return (
     <>
       <Dialog open={open} modal={true}>
-        <DialogContent className='sm:max-w-[425px]' ref={undefined} noCloseX>
-          
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle ref={undefined}>Column Mode Picker</DialogTitle>
-            <DialogDescription ref={undefined}>
+            <DialogTitle>Column Mode Picker</DialogTitle>
+            <DialogDescription>
               Pick the modes for your columns.
               <br></br>
               <br></br>
@@ -142,7 +141,7 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
             </DialogDescription>
           </DialogHeader>
 
-          <div className='grid py-4'>
+          <div className="grid py-4">
             {boxes
               .sort((a, b) => a.index - b.index)
               .map((box) => (
@@ -153,7 +152,7 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
                   ></DropZone>
                   <DataDisplayBox
                     ref={undefined}
-                    className='justify-start'
+                    className="justify-start"
                     draggable={true}
                     onDragStart={() => {
                       setDragIndex(box.index);
@@ -170,7 +169,7 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
             ></DropZone>
           </div>
           <DialogFooter>
-            <Button type='submit' onClick={onSubmit} ref={undefined}>
+            <Button type="submit" onClick={onSubmit}>
               Save
             </Button>
           </DialogFooter>

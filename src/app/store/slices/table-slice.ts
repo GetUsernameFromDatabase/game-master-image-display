@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { type PayloadAction } from '@reduxjs/toolkit';
-import { createAppSlice } from '../create-app-slice';
-import { BoxProperties } from '@/components/data-display-box';
+import { type PayloadAction } from "@reduxjs/toolkit";
+import { createAppSlice } from "../create-app-slice";
+import { BoxProperties } from "@/components/data-display-box";
 
 export interface TableSliceState {
   data: any[];
@@ -11,16 +11,16 @@ export interface TableSliceState {
 const initialState: TableSliceState = {
   data: [],
   columnSettings: [],
-  activeImage: '',
+  activeImage: "",
 };
 
 // If you are not using async thunks you can use the standalone `createSlice`.
 export const tableSlice = createAppSlice({
-  name: 'table',
+  name: "table",
   initialState,
   reducers: (create) => ({
     setTableData: create.reducer(
-      (state, action: PayloadAction<TableSliceState['data']>) => {
+      (state, action: PayloadAction<TableSliceState["data"]>) => {
         state.data = action.payload;
       },
     ),
@@ -30,7 +30,7 @@ export const tableSlice = createAppSlice({
       },
     ),
     setActiveImage: create.reducer(
-      (state, action: PayloadAction<TableSliceState['activeImage']>) => {
+      (state, action: PayloadAction<TableSliceState["activeImage"]>) => {
         state.activeImage = action.payload;
       },
     ),

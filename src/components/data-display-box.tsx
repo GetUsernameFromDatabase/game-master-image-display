@@ -1,7 +1,7 @@
-import { HTMLAttributes, useId } from 'react';
-import { buttonVariants } from './ui/button';
-import { cn } from '@/lib/utils';
-import { Checkbox } from './ui/checkbox';
+import { HTMLAttributes, useId } from "react";
+import { buttonVariants } from "./ui/button";
+import { cn } from "@/lib/utils";
+import { Checkbox } from "./ui/checkbox";
 
 export interface BoxProperties {
   name: string;
@@ -50,15 +50,15 @@ export const DataDisplayBox = ({
     <div
       ref={ref}
       className={cn(
-        buttonVariants({ variant: box.searchBy ? 'secondary' : 'outline' }),
-        'grid grid-cols-12',
+        buttonVariants({ variant: box.searchBy ? "secondary" : "outline" }),
+        "grid grid-cols-12",
         className,
       )}
       onDragOver={(event) => event.preventDefault()}
       {...properties}
     >
       <p
-        className='col-span-8 cursor-default'
+        className="col-span-8 cursor-default"
         onClick={() => {
           onBoxChange({ ...box, searchBy: !box.searchBy });
         }}
@@ -66,15 +66,14 @@ export const DataDisplayBox = ({
         {box.name}
       </p>
 
-      <div className='flex items-center space-x-2 mx-2 col-span-2' ref={ref}>
+      <div className="flex items-center space-x-2 mx-2 col-span-2" ref={ref}>
         <label htmlFor={`hide-${id}`}>hide</label>
         <Checkbox
-          ref={undefined}
           id={`hide-${id}`}
           defaultChecked={box.hide}
           onCheckedChange={(state) => {
-            if (typeof state !== 'boolean') {
-              console.error('New state for box hide status should be boolean');
+            if (typeof state !== "boolean") {
+              console.error("New state for box hide status should be boolean");
               return;
             }
             onBoxChange({ ...box, hide: state });
@@ -87,7 +86,7 @@ export const DataDisplayBox = ({
       {/* <div className='flex items-center space-x-2 mx-2 col-span-2' ref={ref}>
         <label htmlFor={`sort-${id}`}>sort</label>
         <Checkbox
-          ref={undefined}
+          
           id={`sort-${id}`}
           defaultChecked={box.sort}
           onCheckedChange={(state) => {
@@ -100,16 +99,15 @@ export const DataDisplayBox = ({
         ></Checkbox>
       </div> */}
 
-      <div className='flex items-center space-x-2 mx-2 col-span-2' ref={ref}>
+      <div className="flex items-center space-x-2 mx-2 col-span-2" ref={ref}>
         <label htmlFor={`filter-${id}`}>filter</label>
         <Checkbox
-          ref={undefined}
           id={`filter-${id}`}
           defaultChecked={box.filter}
           onCheckedChange={(state) => {
-            if (typeof state !== 'boolean') {
+            if (typeof state !== "boolean") {
               console.error(
-                'New state for box filter status should be boolean',
+                "New state for box filter status should be boolean",
               );
               return;
             }
