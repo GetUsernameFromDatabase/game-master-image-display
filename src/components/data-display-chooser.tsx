@@ -29,9 +29,11 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
     keys.map<BoxProperties>((key, index) => ({
       name: key,
       index: index,
+      searchBy: index === 0,
+
       hide: false,
       sort: true,
-      searchBy: index === 0,
+      filter: false,
     })),
   );
 
@@ -43,7 +45,7 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
       console.warn('Drag index is null, nothing to drop');
       return;
     }
-  
+
     const dragBox = boxes.find((x) => x.index == dragIndex);
     if (!dragBox) {
       console.error('Drag box not found, cannot drop');
@@ -126,11 +128,12 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
 
   return (
     <>
-      <Dialog open={open}>
-        <DialogContent className='sm:max-w-[425px]'>
+      <Dialog open={open} modal={true}>
+        <DialogContent className='sm:max-w-[425px]' ref={undefined} noCloseX>
+          
           <DialogHeader>
-            <DialogTitle>Column Mode Picker</DialogTitle>
-            <DialogDescription>
+            <DialogTitle ref={undefined}>Column Mode Picker</DialogTitle>
+            <DialogDescription ref={undefined}>
               Pick the modes for your columns.
               <br></br>
               <br></br>
@@ -144,8 +147,12 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
               .sort((a, b) => a.index - b.index)
               .map((box) => (
                 <Fragment key={box.name}>
-                  <DropZone onDrop={() => onDropZoneDrop(box.index)}></DropZone>
+                  <DropZone
+                    onDrop={() => onDropZoneDrop(box.index)}
+                    ref={undefined}
+                  ></DropZone>
                   <DataDisplayBox
+                    ref={undefined}
                     className='justify-start'
                     draggable={true}
                     onDragStart={() => {
@@ -159,10 +166,11 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
               ))}
             <DropZone
               onDrop={() => onDropZoneDrop(boxes.length - 1)}
+              ref={undefined}
             ></DropZone>
           </div>
           <DialogFooter>
-            <Button type='submit' onClick={onSubmit}>
+            <Button type='submit' onClick={onSubmit} ref={undefined}>
               Save
             </Button>
           </DialogFooter>
