@@ -204,16 +204,27 @@ export function ImageTable() {
               // eslint-disable-next-line react-hooks/rules-of-hooks
               const [hasError, setHasError] = useState(false);
 
-              if (!hasError && isValidHttpUrl(value)) {
+              if (isValidHttpUrl(value)) {
+                if (!hasError) {
+                  return (
+                    <img
+                      src={value}
+                      className="h-32"
+                      onError={() => setHasError(true)}
+                      onClick={() => dispatch(setActiveImage(value))}
+                    ></img>
+                  );
+                }
+
                 return (
-                  <img
-                    src={value}
-                    className="h-32"
-                    onError={() => setHasError(true)}
-                    onClick={() => dispatch(setActiveImage(value))}
-                  ></img>
+                  <Button asChild variant={"link"}>
+                    <a href={value} target="_blank">
+                      link
+                    </a>
+                  </Button>
                 );
               }
+
               return value;
             },
 
