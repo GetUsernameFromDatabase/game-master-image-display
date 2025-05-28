@@ -28,7 +28,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -95,15 +95,31 @@ export function ImageTable() {
     filterFns: {
       stringArrayIncludes: (row, cId, filterValue) => {
         const value = row.getValue(cId);
+        if (typeof value !== "string") {
+          console.warn(
+            "This filter is meant to be used with strings.",
+            `Got "${typeof value}" type instead:`,
+            value,
+          );
+          return true;
+        }
+
+        const v = value.toLowerCase();
+
+        /** currently can be assumed that filterValue array is string[]
+         * and all are lowercase @see initializeFilterColumnValues */
         if (Array.isArray(filterValue)) {
-          return filterValue.includes(value);
+          return filterValue.includes(v);
         }
-
-        if (typeof value === "string") {
-          return value.includes(filterValue);
+        if (typeof filterValue !== "string") {
+          console.warn(
+            "FilterValue is expected to be string.",
+            `Got "${typeof filterValue}":`,
+            filterValue,
+          );
+          return true;
         }
-
-        return true;
+        return v.includes(filterValue.toLowerCase());
       },
     },
   });
@@ -148,16 +164,22 @@ export function ImageTable() {
     setColumnFilters(Object.values(newColumnFilters));
   };
 
-  useEffect(() => {
+  const initializeFilterColumnValues = useCallback(() => {
     dispatchFilterColumnValues({ type: "reset" });
 
     tableColumns.forEach((column) => {
       if (column.filter) {
         const columnUniqueFilterValues: FilterableColumnValues = {};
-        tableData.forEach((x) => {
-          const value = x[column.name];
-          columnUniqueFilterValues[value] = false;
-        });
+        for (let i = 0, n = tableData.length; i < n; i++) {
+          const value = tableData[i][column.name];
+          if (typeof value !== "string") {
+            // this is meant to be used with strings only
+            continue;
+          }
+
+          const v = value.toLowerCase();
+          columnUniqueFilterValues[v] = false;
+        }
 
         dispatchFilterColumnValues({
           type: "set_column",
@@ -165,7 +187,9 @@ export function ImageTable() {
         });
       }
     });
+  }, [tableColumns, tableData]);
 
+  const initializeColumns = useCallback(() => {
     setColumns(() => {
       const result: React.SetStateAction<ColumnDef<object>[]> =
         tableColumns.map((x) => {
@@ -234,7 +258,12 @@ export function ImageTable() {
 
       return result;
     });
-  }, [dispatch, tableColumns, tableData]);
+  }, [dispatch, tableColumns]);
+
+  useEffect(() => {
+    initializeFilterColumnValues();
+    initializeColumns();
+  }, [initializeColumns, initializeFilterColumnValues]);
 
   return (
     <div className="w-full">
