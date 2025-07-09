@@ -10,22 +10,24 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Delete, File } from "lucide-react";
+import { AlertCircleIcon, Delete, File } from "lucide-react";
 import { useRef, useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { parse as csvParse } from "csv-parse/browser/esm/sync";
 import { ClimbingBoxLoader } from "react-spinners";
 import { useAppDispatch } from "@/app/store/hooks";
 import { setTableData } from "@/app/store/slices/table-slice";
+import { Alert, AlertTitle } from "./ui/alert";
 
-const errorCodes = {
-  responseNotOk: "RESPONSE_NOT_OK",
-  noFile: "NO_FILE",
-  noData: "NO_DATA",
-  unknownError: "UNKNOWN_ERROR",
+const errorMessages = {
+  responseNotOk: "Could not download csv file",
+  noFile: "No file found",
+  noData: "No data found",
+  unableToParse: "Could not parse CSV",
+  unknownError: "Unknown error occured",
 } as const;
 
-type ErrorCodeValues = (typeof errorCodes)[keyof typeof errorCodes];
+type ErrorCodeValues = (typeof errorMessages)[keyof typeof errorMessages];
 interface ImportResult {
   /** For non-thrown errors */
   errorCode: ErrorCodeValues | null;
@@ -41,7 +43,7 @@ function parseImportData(data: string) {
 async function importFromLink(csvLink: string): Promise<ImportResult> {
   const response = await fetch(csvLink);
   if (!response.ok) {
-    return { errorCode: errorCodes.responseNotOk, data: null };
+    return { errorCode: errorMessages.responseNotOk, data: null };
   }
 
   const text = await response.text();
@@ -50,7 +52,7 @@ async function importFromLink(csvLink: string): Promise<ImportResult> {
 
 async function importFromFile(input: HTMLInputElement): Promise<ImportResult> {
   if (!(input.files && input.files[0])) {
-    return { errorCode: errorCodes.noFile, data: null };
+    return { errorCode: errorMessages.noFile, data: null };
   }
   const file = input.files[0];
   const content = await file.text();
@@ -62,11 +64,17 @@ export interface ImportDialogueProperties {
 }
 export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [open, setOpenState] = useState(false);
   const dispatch = useAppDispatch();
 
   const linkInput = useRef<HTMLInputElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+
+  function setOpen(state: boolean) {
+    setOpenState(state);
+    setErrorMessage("");
+  }
 
   async function onSubmit() {
     if (!linkInput.current || !fileInput.current) {
@@ -77,7 +85,7 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
     const file = fileInput.current.value;
 
     /**  */
-    let result: ImportResult = { errorCode: errorCodes.noData, data: null };
+    let result: ImportResult = { errorCode: errorMessages.noData, data: null };
     try {
       if (file) {
         result = await importFromFile(fileInput.current);
@@ -86,8 +94,8 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
         result = await importFromLink(dataLink);
       }
     } catch (error) {
-      console.error("Error occured during import:", error);
-      result.errorCode = errorCodes.unknownError;
+      console.error("Error occured during parsing:", error);
+      result.errorCode = errorMessages.unableToParse;
     }
 
     setLoading(false);
@@ -99,9 +107,10 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
       return;
     }
 
-    console.error("No valid data found");
-    // TODO: some error management
-    // I am thinking display error text, red out the input (label?) that the error is associated with
+    // dealing with errors
+    const errorFeedback = result.errorCode ?? errorMessages.unknownError;
+    setErrorMessage(errorFeedback);
+    console.error(errorFeedback);
   }
 
   return (
@@ -121,6 +130,13 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
             Import your table data wheter it be from a link or a file
           </DialogDescription>
         </DialogHeader>
+
+        {errorMessage && (
+          <Alert variant="destructive">
+            <AlertCircleIcon />
+            <AlertTitle>{errorMessage}</AlertTitle>
+          </Alert>
+        )}
 
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-6 items-center gap-4">
@@ -182,8 +198,8 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
             </TooltipTrigger>
             <TooltipContent>
               <p>
-                If file is selected then file will be used whatever is in the
-                link input
+                If file is selected then file will take priority, links are
+                ignored
               </p>
             </TooltipContent>
           </Tooltip>
