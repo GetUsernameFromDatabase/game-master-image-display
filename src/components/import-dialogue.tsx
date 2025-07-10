@@ -14,7 +14,7 @@ import { AlertCircleIcon, Delete, File } from "lucide-react";
 import { useRef, useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { parse as csvParse } from "csv-parse/browser/esm/sync";
-import { ClimbingBoxLoader } from "react-spinners";
+import { BounceLoader } from "react-spinners";
 import { useAppDispatch } from "@/app/store/hooks";
 import { setTableData } from "@/app/store/slices/table-slice";
 import { Alert, AlertTitle } from "./ui/alert";
@@ -114,97 +114,104 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm" variant="outline" className="h-8 gap-1">
-          <File className="h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-            Import
-          </span>
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Import Table Data</DialogTitle>
-          <DialogDescription>
-            Import your table data wheter it be from a link or a file
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="outline" className="h-8 gap-1">
+            <File className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Import
+            </span>
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Import Table Data</DialogTitle>
+            <DialogDescription>
+              Import your table data wheter it be from a link or a file
+            </DialogDescription>
+          </DialogHeader>
 
-        {errorMessage && (
-          <Alert variant="destructive">
-            <AlertCircleIcon />
-            <AlertTitle>{errorMessage}</AlertTitle>
-          </Alert>
-        )}
+          {errorMessage && (
+            <Alert variant="destructive">
+              <AlertCircleIcon />
+              <AlertTitle>{errorMessage}</AlertTitle>
+            </Alert>
+          )}
 
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-6 items-center gap-4">
-            <Label htmlFor="import-link" className="text-right">
-              Link
-            </Label>
-            <Input
-              id="import-link"
-              ref={linkInput}
-              type="text"
-              className="col-span-5"
-            />
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-6 items-center gap-4">
+              <Label htmlFor="import-link" className="text-right">
+                Link
+              </Label>
+              <Input
+                id="import-link"
+                ref={linkInput}
+                type="text"
+                className="col-span-5"
+              />
+            </div>
+            <div className="text-center">or</div>
+            <div className="grid grid-cols-6 items-center gap-4">
+              <Label htmlFor="import-file" className="text-right">
+                File
+              </Label>
+              <Input
+                id="import-file"
+                ref={fileInput}
+                type="file"
+                className="col-span-4"
+                accept=".csv"
+              />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Delete
+                    className="col-span-1"
+                    onClick={() => {
+                      if (fileInput.current?.value)
+                        fileInput.current.value = "";
+                    }}
+                  ></Delete>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Discard the file</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </div>
-          <div className="text-center">or</div>
-          <div className="grid grid-cols-6 items-center gap-4">
-            <Label htmlFor="import-file" className="text-right">
-              File
-            </Label>
-            <Input
-              id="import-file"
-              ref={fileInput}
-              type="file"
-              className="col-span-4"
-              accept=".csv"
-            />
+          <DialogFooter>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Delete
-                  className="col-span-1"
-                  onClick={() => {
-                    if (fileInput.current?.value) fileInput.current.value = "";
-                  }}
-                ></Delete>
+                <Button type="submit" onClick={onSubmit}>
+                  Import
+                </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Discard the file</p>
+                <p>
+                  If file is selected then file will take priority, links are
+                  ignored
+                </p>
               </TooltipContent>
             </Tooltip>
-          </div>
-          <ClimbingBoxLoader
-            color={"teal"}
-            cssOverride={{
-              display: "block",
-              margin: "0 auto",
-              borderColor: "red",
-            }}
-            loading={loading}
-            size={150}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-          />
-        </div>
-        <DialogFooter>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button type="submit" onClick={onSubmit}>
-                Import
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>
-                If file is selected then file will take priority, links are
-                ignored
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <BounceLoader
+        color={"silver"}
+        loading={loading}
+        cssOverride={{
+          zIndex: 69,
+          display: "block",
+          // make it be in the center
+          position: "absolute",
+          top: "calc(50vh - 45px)",
+          left: "calc(50vw - 45px)",
+        }}
+        size={90}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+    </>
   );
 }
