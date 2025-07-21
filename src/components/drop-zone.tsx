@@ -1,6 +1,9 @@
-import { allowDrop } from "@/lib/dragging";
 import { cn } from "@/lib/utils";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, DragEvent } from "react";
+
+function allowDrop(ev: DragEvent) {
+  ev.preventDefault();
+}
 
 export const DropZone = ({
   ref,
