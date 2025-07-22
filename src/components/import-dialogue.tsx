@@ -94,6 +94,8 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
         result = await importFromLink(dataLink);
       }
     } catch (error) {
+      // TODO: have parse step happen after fetching content
+      // easier to seperate parsing errors from network error
       console.error("Error occured during parsing:", error);
       result.errorCode = errorMessages.unableToParse;
     }
@@ -188,6 +190,7 @@ export function ImportDialogue({ onSuccess }: ImportDialogueProperties) {
               </TooltipTrigger>
               <TooltipContent>
                 <p>
+                  {/* TODO: have this only displayed when link has value */}
                   If file is selected then file will take priority, links are
                   ignored
                 </p>

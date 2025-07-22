@@ -13,9 +13,6 @@ import { useAppSelector } from "@/app/store/hooks";
 import { BoxProperties, DataDisplayBox } from "./data-display-box";
 import { DropZone } from "./drop-zone";
 
-// TODO: there has to be a better way than to just use setBoxes, right?
-//  just mutating object is not picked up well by react
-
 export interface DataDisplayChooserProperties {
   onFinish(data: BoxProperties[]): void;
 }
@@ -25,6 +22,7 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
 
   const keys = useAppSelector(selectTableKeys);
+  // TODO: replace with immer -- makes it easier to modify object
   const [boxes, setBoxes] = useState(
     keys.map<BoxProperties>((key, index) => ({
       name: key,
@@ -36,9 +34,6 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
       filter: false,
     })),
   );
-
-  // TODO: communicate to parent of open status
-  // TODO: sort, hide, active row for search by...
 
   function onDataDisplayBoxDrop(box: BoxProperties) {
     if (dragIndex == null) {
@@ -146,6 +141,8 @@ export function DataDisplayChooser(properties: DataDisplayChooserProperties) {
               .sort((a, b) => a.index - b.index)
               .map((box) => (
                 <Fragment key={box.name}>
+                  {/* TODO: make it more obvious that this is draggable
+                  using a dotted line might be a good idea */}
                   <DropZone
                     onDrop={() => onDropZoneDrop(box.index)}
                     ref={undefined}

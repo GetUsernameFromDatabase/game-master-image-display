@@ -26,7 +26,6 @@ export default function MainPage() {
   }
 
   return (
-    // TODO: move all tags till main (included) into a page wrapper orsm
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
@@ -48,7 +47,8 @@ export default function MainPage() {
             <CardHeader>
               <CardTitle>Images</CardTitle>
               <CardDescription>
-                Here are your images, click on them for fullscreen picture
+                Here are your images, click on them to see them change in the
+                image view window
               </CardDescription>
             </CardHeader>
             <CardContent>
