@@ -4,7 +4,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/image-view-with-category",
+  base: "/game-master-image-display",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
